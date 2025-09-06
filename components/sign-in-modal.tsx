@@ -48,11 +48,11 @@ export function SignInModal({ isOpen, onClose, onSignUpClick }: SignInModalProps
         onClose()
         // Redirect based on profile role
         if (profile?.role === 'parent') {
-          router.push("/parent/dashboard")
+          router.push("/app/parent/dashboard")
         } else if (profile?.role === 'teacher') {
-          router.push("/teacher/dashboard")
+          router.push("/app/teacher/dashboard")
         } else {
-          router.push("/dashboard")
+          router.push("/app/dashboard")
         }
       }
     } catch (err: any) {

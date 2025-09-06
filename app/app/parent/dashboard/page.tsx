@@ -138,7 +138,7 @@ export default function ParentDashboard() {
         <div className="flex items-center gap-3">
           <span className="font-sans text-gray-600">Welcome, {parentData.name}</span>
           <Button
-            onClick={() => router.push('/find-teachers')}
+            onClick={() => router.push('/app/find-teachers')}
             className="bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
           >
             Find Teachers
@@ -176,7 +176,7 @@ export default function ParentDashboard() {
                   <p className="text-amber-50">Find qualified music teachers in your area and book your first lesson.</p>
                 </div>
                 <Button
-                  onClick={() => router.push('/find-teachers')}
+                  onClick={() => router.push('/app/find-teachers')}
                   className="bg-white text-amber-600 hover:bg-amber-50 font-semibold px-6 py-3"
                 >
                   Browse Teachers →

@@ -31,6 +31,30 @@ export const authService = {
 
       if (authError) throw authError
 
+      // Since email confirmation is disabled, automatically sign in the user
+      if (authData.user) {
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        })
+
+        if (signInError) throw signInError
+
+        // Get the user's profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authData.user.id)
+          .single()
+
+        return { 
+          user: authData.user, 
+          profile,
+          session: signInData.session,
+          error: null 
+        }
+      }
+
       return { user: authData.user, error: null }
     } catch (error: any) {
       return { user: null, error: error.message }

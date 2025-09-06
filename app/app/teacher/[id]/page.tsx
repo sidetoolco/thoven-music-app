@@ -82,7 +82,7 @@ export default function TeacherProfilePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-500 mb-4">Teacher not found</p>
-          <Button onClick={() => router.push('/find-teachers')}>
+          <Button onClick={() => router.push('/app/find-teachers')}>
             Back to Teachers
           </Button>
         </div>
@@ -97,7 +97,7 @@ export default function TeacherProfilePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Button
             variant="ghost"
-            onClick={() => router.push('/find-teachers')}
+            onClick={() => router.push('/app/find-teachers')}
             className="hover:bg-amber-50"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />

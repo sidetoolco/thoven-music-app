@@ -48,7 +48,7 @@ export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps
     setError("")
 
     try {
-      const { user, error } = await signUp({
+      const result = await signUp({
         email: formData.email,
         password: formData.password,
         first_name: formData.firstName,
@@ -56,17 +56,17 @@ export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps
         role: formData.userType
       })
       
-      if (error) {
-        throw new Error(error)
+      if (result.error) {
+        throw new Error(result.error)
       }
 
-      if (user) {
+      if (result.user && result.session) {
         onClose()
-        // Redirect based on user type
+        // Auto-login successful, redirect based on user type
         if (formData.userType === "parent") {
-          router.push("/parent/dashboard")
+          router.push("/app/parent/dashboard")
         } else {
-          router.push("/teacher/dashboard")
+          router.push("/app/teacher/dashboard")
         }
       }
     } catch (err: any) {

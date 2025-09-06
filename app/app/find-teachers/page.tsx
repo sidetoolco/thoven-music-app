@@ -129,7 +129,7 @@ export default function FindTeachersPage() {
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
-                onClick={() => router.push('/parent/dashboard')}
+                onClick={() => router.push('/app/parent/dashboard')}
                 className="hover:bg-amber-50"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
@@ -245,7 +245,7 @@ export default function FindTeachersPage() {
               <Card
                 key={teacher.id}
                 className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => router.push(`/teacher/${teacher.id}`)}
+                onClick={() => router.push(`/app/teacher/${teacher.id}`)}
               >
                 <div className="p-6">
                   {/* Teacher Header */}

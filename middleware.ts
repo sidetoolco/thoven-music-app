@@ -27,17 +27,16 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // Protected routes
-  const protectedPaths = ['/dashboard', '/parent/dashboard', '/teacher/dashboard']
-  const isProtectedPath = protectedPaths.some(path => req.nextUrl.pathname.startsWith(path))
+  // Protected routes - everything under /app
+  const isProtectedPath = req.nextUrl.pathname.startsWith('/app')
 
   if (isProtectedPath && !session) {
     // Redirect to home page if trying to access protected route without session
     return NextResponse.redirect(new URL('/', req.url))
   }
 
-  // If user is logged in and has a profile, redirect based on role
-  if (session && req.nextUrl.pathname === '/dashboard') {
+  // If user is logged in and hits /app root, redirect based on role
+  if (session && req.nextUrl.pathname === '/app') {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
@@ -46,16 +45,18 @@ export async function middleware(req: NextRequest) {
 
     if (profile) {
       if (profile.role === 'parent') {
-        return NextResponse.redirect(new URL('/parent/dashboard', req.url))
+        return NextResponse.redirect(new URL('/app/parent/dashboard', req.url))
       } else if (profile.role === 'teacher') {
-        return NextResponse.redirect(new URL('/teacher/dashboard', req.url))
+        return NextResponse.redirect(new URL('/app/teacher/dashboard', req.url))
       }
     }
+    // Default redirect if no specific role
+    return NextResponse.redirect(new URL('/app/dashboard', req.url))
   }
 
   return res
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/parent/:path*', '/teacher/:path*']
+  matcher: ['/app/:path*']
 }

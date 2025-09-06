@@ -11,13 +11,30 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { SignInModal } from "@/components/sign-in-modal"
 import { SignUpModal } from "@/components/sign-up-modal"
+import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
+  const router = useRouter()
+  const { user, profile, loading } = useAuth()
   const [currentRole, setCurrentRole] = useState<"learner" | "teacher">("learner")
   const [showTeacherApplication, setShowTeacherApplication] = useState(false)
   const [showSignInDropdown, setShowSignInDropdown] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showSignUpModal, setShowSignUpModal] = useState(false)
+
+  useEffect(() => {
+    // If user is already logged in, redirect to app
+    if (!loading && user && profile) {
+      if (profile.role === 'parent') {
+        router.push('/app/parent/dashboard')
+      } else if (profile.role === 'teacher') {
+        router.push('/app/teacher/dashboard')
+      } else {
+        router.push('/app/dashboard')
+      }
+    }
+  }, [user, profile, loading, router])
 
   useEffect(() => {
     const handleOpenApplication = () => {
