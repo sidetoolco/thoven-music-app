@@ -19,7 +19,7 @@ BEGIN
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
     COALESCE(NEW.raw_user_meta_data->>'last_name', ''),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'parent'),
+    COALESCE(NEW.raw_user_meta_data->>'role', 'parent')::user_role,
     NOW(),
     NOW()
   )
@@ -50,7 +50,7 @@ SELECT
   u.email,
   COALESCE(u.raw_user_meta_data->>'first_name', ''),
   COALESCE(u.raw_user_meta_data->>'last_name', ''),
-  COALESCE(u.raw_user_meta_data->>'role', 'parent'),
+  COALESCE(u.raw_user_meta_data->>'role', 'parent')::user_role,
   NOW(),
   NOW()
 FROM auth.users u

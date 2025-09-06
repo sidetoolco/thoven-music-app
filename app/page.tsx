@@ -11,6 +11,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { SignInModal } from "@/components/sign-in-modal"
 import { SignUpModal } from "@/components/sign-up-modal"
+import { TeacherApplicationModal } from "@/components/teacher-application-modal"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 
@@ -95,7 +96,10 @@ export default function HomePage() {
           >
             Become a Teacher
           </Button>
-          <Button className="bg-rose-400 hover:bg-rose-500 text-white shadow-[0_4px_0_0_rgb(244,63,94)] hover:shadow-[0_2px_0_0_rgb(244,63,94)] active:shadow-[0_1px_0_0_rgb(244,63,94)] transition-all duration-200 active:translate-y-1 font-sans font-semibold px-6 py-2.5 focus:ring-2 focus:ring-rose-300 focus:ring-offset-2">
+          <Button 
+            className="bg-rose-400 hover:bg-rose-500 text-white shadow-[0_4px_0_0_rgb(244,63,94)] hover:shadow-[0_2px_0_0_rgb(244,63,94)] active:shadow-[0_1px_0_0_rgb(244,63,94)] transition-all duration-200 active:translate-y-1 font-sans font-semibold px-6 py-2.5 focus:ring-2 focus:ring-rose-300 focus:ring-offset-2"
+            onClick={() => setShowSignUpModal(true)}
+          >
             Find Teacher
           </Button>
           <Button
@@ -329,6 +333,12 @@ export default function HomePage() {
         onClose={() => setShowSignUpModal(false)}
         onSignInClick={handleSwitchToSignIn}
       />
+      {showTeacherApplication && (
+        <TeacherApplicationModal
+          isOpen={showTeacherApplication}
+          onClose={() => setShowTeacherApplication(false)}
+        />
+      )}
     </div>
   )
 }
