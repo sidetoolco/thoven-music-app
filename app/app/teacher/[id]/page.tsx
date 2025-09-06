@@ -61,9 +61,8 @@ export default function TeacherProfilePage() {
       setTeacher(data)
     } catch (error) {
       console.error('Error fetching teacher:', error)
-      // Use mock data for demonstration
-      const mockTeacher = mockTeachers.find(t => t.id === teacherId)
-      if (mockTeacher) setTeacher(mockTeacher)
+      // No mock data - only show real teachers
+      setTeacher(null)
     } finally {
       setLoading(false)
     }
@@ -372,29 +371,3 @@ export default function TeacherProfilePage() {
   )
 }
 
-// Mock data for demonstration
-const mockTeachers: TeacherProfile[] = [
-  {
-    id: '1',
-    first_name: 'Sarah',
-    last_name: 'Johnson',
-    email: 'sarah@example.com',
-    bio: 'Experienced piano teacher with a passion for classical music',
-    profile_picture_url: '',
-    city: 'New York',
-    state: 'NY',
-    phone: '',
-    teachers: {
-      instruments_taught: ['Piano', 'Music Theory'],
-      age_groups_taught: ['Children (5-12)', 'Teens (13-17)', 'Adults (18+)'],
-      hourly_rate: 75,
-      years_experience: 10,
-      online_lessons: true,
-      in_person_lessons: true,
-      teaching_method: 'I focus on building strong fundamentals while keeping lessons engaging and fun.',
-      introduction: 'I have been teaching piano for over 10 years and love helping students discover their musical potential.',
-      availability: {},
-      verified: true
-    }
-  }
-]

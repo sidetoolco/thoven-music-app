@@ -64,9 +64,9 @@ export default function FindTeachersPage() {
       setFilteredTeachers(data || [])
     } catch (error) {
       console.error('Error fetching teachers:', error)
-      // Use mock data if no teachers in database
-      setTeachers(mockTeachers)
-      setFilteredTeachers(mockTeachers)
+      // No mock data - only show real teachers
+      setTeachers([])
+      setFilteredTeachers([])
     } finally {
       setLoading(false)
     }
@@ -338,60 +338,3 @@ export default function FindTeachersPage() {
   )
 }
 
-// Mock data for demonstration
-const mockTeachers: Teacher[] = [
-  {
-    id: '1',
-    first_name: 'Sarah',
-    last_name: 'Johnson',
-    bio: 'Experienced piano teacher with a passion for classical music',
-    profile_picture_url: '',
-    city: 'New York',
-    state: 'NY',
-    teachers: {
-      instruments_taught: ['Piano', 'Music Theory'],
-      hourly_rate: 75,
-      years_experience: 10,
-      online_lessons: true,
-      in_person_lessons: true,
-      introduction: 'I have been teaching piano for over 10 years and love helping students discover their musical potential.',
-      verified: true
-    }
-  },
-  {
-    id: '2',
-    first_name: 'Michael',
-    last_name: 'Chen',
-    bio: 'Guitar instructor specializing in rock and blues',
-    profile_picture_url: '',
-    city: 'Los Angeles',
-    state: 'CA',
-    teachers: {
-      instruments_taught: ['Guitar', 'Bass'],
-      hourly_rate: 60,
-      years_experience: 8,
-      online_lessons: true,
-      in_person_lessons: false,
-      introduction: 'Rock, blues, and jazz guitarist with experience teaching all levels.',
-      verified: true
-    }
-  },
-  {
-    id: '3',
-    first_name: 'Emily',
-    last_name: 'Rodriguez',
-    bio: 'Violin and viola teacher for all ages',
-    profile_picture_url: '',
-    city: 'Chicago',
-    state: 'IL',
-    teachers: {
-      instruments_taught: ['Violin', 'Viola'],
-      hourly_rate: 85,
-      years_experience: 15,
-      online_lessons: true,
-      in_person_lessons: true,
-      introduction: 'Professional violinist with the Chicago Symphony, teaching students of all ages.',
-      verified: true
-    }
-  }
-]
