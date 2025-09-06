@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { X, Eye, EyeOff } from "lucide-react"
-import { useAuth } from "@/contexts/auth-context"
+import { authService } from "@/lib/supabase/auth-v2"
 import { useRouter } from "next/navigation"
 
 interface SignUpModalProps {
@@ -18,7 +18,6 @@ interface SignUpModalProps {
 
 export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps) {
   const router = useRouter()
-  const { signUp } = useAuth()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -48,7 +47,9 @@ export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps
     setError("")
 
     try {
-      const result = await signUp({
+      console.log('📝 Submitting signup form...')
+      
+      const result = await authService.signUp({
         email: formData.email,
         password: formData.password,
         first_name: formData.firstName,
@@ -57,17 +58,24 @@ export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps
       })
       
       if (result.error) {
+        console.error('Signup error:', result.error)
         throw new Error(result.error)
       }
 
       if (result.user && result.session) {
+        console.log('✅ Signup successful, redirecting...')
         onClose()
-        // Auto-login successful, redirect based on user type
-        if (formData.userType === "parent") {
-          router.push("/app/parent/dashboard")
-        } else {
-          router.push("/app/teacher/dashboard")
-        }
+        
+        // Small delay to ensure state updates
+        setTimeout(() => {
+          if (formData.userType === "parent") {
+            router.push("/app/parent/dashboard")
+          } else {
+            router.push("/app/teacher/dashboard")
+          }
+        }, 100)
+      } else {
+        throw new Error('Signup completed but no session created')
       }
     } catch (err: any) {
       setError(err.message || "Sign up failed. Please try again.")

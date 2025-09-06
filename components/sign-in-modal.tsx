@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { X, Eye, EyeOff } from "lucide-react"
-import { useAuth } from "@/contexts/auth-context"
+import { authService } from "@/lib/supabase/auth-v2"
 import { useRouter } from "next/navigation"
 
 interface SignInModalProps {
@@ -18,7 +18,6 @@ interface SignInModalProps {
 
 export function SignInModal({ isOpen, onClose, onSignUpClick }: SignInModalProps) {
   const router = useRouter()
-  const { signIn } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -35,25 +34,34 @@ export function SignInModal({ isOpen, onClose, onSignUpClick }: SignInModalProps
     setError("")
 
     try {
-      const { user, profile, session, error } = await signIn({
+      console.log('🔑 Attempting sign in...')
+      
+      const result = await authService.signIn({
         email,
         password
       })
       
-      if (error) {
-        throw new Error(error)
+      if (result.error) {
+        console.error('Sign in error:', result.error)
+        throw new Error(result.error)
       }
 
-      if (user && session) {
+      if (result.user && result.session) {
+        console.log('✅ Sign in successful, redirecting...')
         onClose()
-        // Redirect based on profile role
-        if (profile?.role === 'parent') {
-          router.push("/app/parent/dashboard")
-        } else if (profile?.role === 'teacher') {
-          router.push("/app/teacher/dashboard")
-        } else {
-          router.push("/app/dashboard")
-        }
+        
+        // Small delay to ensure state updates
+        setTimeout(() => {
+          if (result.profile?.role === 'parent') {
+            router.push("/app/parent/dashboard")
+          } else if (result.profile?.role === 'teacher') {
+            router.push("/app/teacher/dashboard")
+          } else {
+            router.push("/app/dashboard")
+          }
+        }, 100)
+      } else {
+        throw new Error('Sign in completed but no session created')
       }
     } catch (err: any) {
       if (err.message.includes("Invalid") || err.message.includes("credentials")) {

@@ -27,10 +27,14 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  // Log middleware activity
+  console.log(`[Middleware] Path: ${req.nextUrl.pathname}, Session: ${session ? 'Yes' : 'No'}`)
+
   // Protected routes - everything under /app
   const isProtectedPath = req.nextUrl.pathname.startsWith('/app')
 
   if (isProtectedPath && !session) {
+    console.log('[Middleware] Redirecting to login - no session')
     // Redirect to home page if trying to access protected route without session
     return NextResponse.redirect(new URL('/', req.url))
   }
