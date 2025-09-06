@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { X, Eye, EyeOff } from "lucide-react"
-import { api } from "@/lib/api"
+import { authService } from "@/lib/supabase/auth"
 import { useRouter } from "next/navigation"
 
 interface SignUpModalProps {
@@ -47,18 +47,19 @@ export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps
     setError("")
 
     try {
-      const signupData = {
+      const { user, error } = await authService.signUp({
         email: formData.email,
         password: formData.password,
-        password_confirmation: formData.passwordConfirmation,
         first_name: formData.firstName,
         last_name: formData.lastName,
-        profile_type: formData.userType === "parent" ? 2 : 3
+        role: formData.userType
+      })
+      
+      if (error) {
+        throw new Error(error)
       }
 
-      const response = await api.auth.signup(signupData)
-      
-      if (response.token) {
+      if (user) {
         onClose()
         // Redirect based on user type
         if (formData.userType === "parent") {

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { X, Eye, EyeOff } from "lucide-react"
-import { api } from "@/lib/api"
+import { authService } from "@/lib/supabase/auth"
 import { useRouter } from "next/navigation"
 
 interface SignInModalProps {
@@ -34,27 +34,30 @@ export function SignInModal({ isOpen, onClose, onSignUpClick }: SignInModalProps
     setError("")
 
     try {
-      const response = await api.auth.login({
+      const { user, profile, session, error } = await authService.signIn({
         email,
-        password,
-        user_type: 'user'
+        password
       })
       
-      if (response.token) {
+      if (error) {
+        throw new Error(error)
+      }
+
+      if (user && session) {
         onClose()
-        // Redirect based on profile type
-        if (response.profile?.profile_type === 2) {
+        // Redirect based on profile role
+        if (profile?.role === 'parent') {
           router.push("/parent/dashboard")
-        } else if (response.profile?.profile_type === 3) {
+        } else if (profile?.role === 'teacher') {
           router.push("/teacher/dashboard")
         } else {
           router.push("/dashboard")
         }
       }
     } catch (err: any) {
-      if (err.message.includes("401") || err.message.includes("Invalid")) {
+      if (err.message.includes("Invalid") || err.message.includes("credentials")) {
         setError("Invalid email or password")
-      } else if (err.message.includes("404")) {
+      } else if (err.message.includes("not found") || err.message.includes("No user")) {
         setError("No account found. Want to sign up?")
       } else {
         setError(err.message || "Sign in failed. Please try again.")
