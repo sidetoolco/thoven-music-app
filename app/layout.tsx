@@ -23,7 +23,8 @@ export const metadata: Metadata = {
   keywords: "music lessons, piano lessons, guitar lessons, violin lessons, music teachers, online music lessons",
   authors: [{ name: "Thoven" }],
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
     title: "Thoven - Personalized Music Lessons",
