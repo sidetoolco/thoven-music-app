@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { X, Eye, EyeOff } from "lucide-react"
-import { authService } from "@/lib/supabase/auth"
+import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 
 interface SignInModalProps {
@@ -18,6 +18,7 @@ interface SignInModalProps {
 
 export function SignInModal({ isOpen, onClose, onSignUpClick }: SignInModalProps) {
   const router = useRouter()
+  const { signIn } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -34,7 +35,7 @@ export function SignInModal({ isOpen, onClose, onSignUpClick }: SignInModalProps
     setError("")
 
     try {
-      const { user, profile, session, error } = await authService.signIn({
+      const { user, profile, session, error } = await signIn({
         email,
         password
       })

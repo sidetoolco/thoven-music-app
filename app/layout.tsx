@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Montserrat, Fredoka } from "next/font/google"
+import { AuthProvider } from "@/contexts/auth-context"
 import "./globals.css"
 
 export const fontSans = Montserrat({
@@ -40,7 +41,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${fontSans.variable} ${fontDisplay.variable} antialiased`}>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   )
 }

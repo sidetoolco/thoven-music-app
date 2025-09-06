@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ParentGreetingCard } from "@/components/parent-greeting-card"
 import { StudentsPanel } from "@/components/students-panel"
@@ -8,13 +10,7 @@ import { ClassesPanel } from "@/components/classes-panel"
 import { MessageCenter } from "@/components/message-center"
 import { LeftNavRail } from "@/components/left-nav-rail"
 
-// Dev fixtures
-const parentFixture = {
-  name: "Keriman Erten",
-  email: "kerimanerten@iCloud.com",
-  role: "Mother",
-  avatar: "/woman-dark-hair.png",
-}
+// Dev fixtures will be replaced with real user data
 
 const studentsFixture = [
   {
@@ -63,10 +59,31 @@ const messagesFixture = [
 ]
 
 export default function ParentDashboard() {
+  const { user, profile, signOut, loading } = useAuth()
+  const router = useRouter()
   const [students, setStudents] = useState(studentsFixture)
   const [classes, setClasses] = useState(classesFixture)
   const [messages, setMessages] = useState(messagesFixture)
   const [showArchived, setShowArchived] = useState(false)
+
+  // Use real user data or fallback to fixture
+  const parentData = profile ? {
+    name: `${profile.first_name} ${profile.last_name}`,
+    email: profile.email,
+    role: profile.role === 'parent' ? 'Parent' : profile.role,
+    avatar: profile.profile_picture_url || "/woman-dark-hair.png",
+  } : {
+    name: "Keriman Erten",
+    email: "kerimanerten@iCloud.com",
+    role: "Mother",
+    avatar: "/woman-dark-hair.png",
+  }
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/')
+    }
+  }, [user, loading, router])
 
   const handleAddStudent = (studentData: any) => {
     const newStudent = {
@@ -95,8 +112,17 @@ export default function ParentDashboard() {
     setMessages(messages.filter((msg) => msg.id !== messageId))
   }
 
-  const handleLogout = () => {
-    window.location.href = "/"
+  const handleLogout = async () => {
+    await signOut()
+    router.push('/')
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    )
   }
 
   return (
@@ -110,7 +136,7 @@ export default function ParentDashboard() {
           />
         </div>
         <div className="flex items-center gap-3">
-          <span className="font-sans text-gray-600">Welcome, {parentFixture.name}</span>
+          <span className="font-sans text-gray-600">Welcome, {parentData.name}</span>
           <Button
             variant="outline"
             className="border-orange-400 text-orange-600 hover:bg-orange-50 bg-transparent shadow-[0_4px_0_0_rgb(251,146,60)] hover:shadow-[0_2px_0_0_rgb(251,146,60)] active:shadow-[0_1px_0_0_rgb(251,146,60)] transition-all duration-150 active:translate-y-1 font-sans font-semibold"
@@ -137,7 +163,7 @@ export default function ParentDashboard() {
         <main className="flex-1 p-6 ml-64">
           {/* Row A - Top Panels */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
-            <ParentGreetingCard parent={parentFixture} />
+            <ParentGreetingCard parent={parentData} />
             <StudentsPanel students={students} onAddStudent={handleAddStudent} />
             <ClassesPanel
               classes={classes}

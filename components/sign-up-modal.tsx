@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { X, Eye, EyeOff } from "lucide-react"
-import { authService } from "@/lib/supabase/auth"
+import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 
 interface SignUpModalProps {
@@ -18,6 +18,7 @@ interface SignUpModalProps {
 
 export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps) {
   const router = useRouter()
+  const { signUp } = useAuth()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -47,7 +48,7 @@ export function SignUpModal({ isOpen, onClose, onSignInClick }: SignUpModalProps
     setError("")
 
     try {
-      const { user, error } = await authService.signUp({
+      const { user, error } = await signUp({
         email: formData.email,
         password: formData.password,
         first_name: formData.firstName,
