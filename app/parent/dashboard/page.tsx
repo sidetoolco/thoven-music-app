@@ -138,6 +138,12 @@ export default function ParentDashboard() {
         <div className="flex items-center gap-3">
           <span className="font-sans text-gray-600">Welcome, {parentData.name}</span>
           <Button
+            onClick={() => router.push('/find-teachers')}
+            className="bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+          >
+            Find Teachers
+          </Button>
+          <Button
             variant="outline"
             className="border-orange-400 text-orange-600 hover:bg-orange-50 bg-transparent shadow-[0_4px_0_0_rgb(251,146,60)] hover:shadow-[0_2px_0_0_rgb(251,146,60)] active:shadow-[0_1px_0_0_rgb(251,146,60)] transition-all duration-150 active:translate-y-1 font-sans font-semibold"
             onClick={handleLogout}
@@ -161,6 +167,24 @@ export default function ParentDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 p-6 ml-64">
+          {/* Find Teachers CTA - Show when no students */}
+          {students.length === 0 && (
+            <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-8 mb-6 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">Start Your Musical Journey!</h2>
+                  <p className="text-amber-50">Find qualified music teachers in your area and book your first lesson.</p>
+                </div>
+                <Button
+                  onClick={() => router.push('/find-teachers')}
+                  className="bg-white text-amber-600 hover:bg-amber-50 font-semibold px-6 py-3"
+                >
+                  Browse Teachers →
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Row A - Top Panels */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
             <ParentGreetingCard parent={parentData} />
