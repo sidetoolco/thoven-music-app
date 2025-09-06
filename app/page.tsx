@@ -9,11 +9,15 @@ import { TeacherLanding } from "@/components/teacher-landing"
 import { H1, Highlight } from "@/components/heading"
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { SignInModal } from "@/components/sign-in-modal"
+import { SignUpModal } from "@/components/sign-up-modal"
 
 export default function HomePage() {
   const [currentRole, setCurrentRole] = useState<"learner" | "teacher">("learner")
   const [showTeacherApplication, setShowTeacherApplication] = useState(false)
   const [showSignInDropdown, setShowSignInDropdown] = useState(false)
+  const [showSignInModal, setShowSignInModal] = useState(false)
+  const [showSignUpModal, setShowSignUpModal] = useState(false)
 
   useEffect(() => {
     const handleOpenApplication = () => {
@@ -29,7 +33,18 @@ export default function HomePage() {
   }
 
   const handleSignIn = () => {
-    setShowSignInDropdown(!showSignInDropdown)
+    setShowSignInModal(true)
+    setShowSignInDropdown(false)
+  }
+
+  const handleSwitchToSignIn = () => {
+    setShowSignUpModal(false)
+    setShowSignInModal(true)
+  }
+
+  const handleSwitchToSignUp = () => {
+    setShowSignInModal(false)
+    setShowSignUpModal(true)
   }
 
   return (
@@ -128,12 +143,16 @@ export default function HomePage() {
                 </Button>
                 <p className="font-sans text-center text-sm text-gray-600">
                   Don't have an account?{" "}
-                  <a
-                    href="#"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSignInDropdown(false)
+                      setShowSignUpModal(true)
+                    }}
                     className="text-amber-600 hover:text-amber-700 font-medium transition-colors hover:underline"
                   >
                     Sign Up
-                  </a>
+                  </button>
                 </p>
               </form>
             </div>
@@ -281,6 +300,18 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Modals */}
+      <SignInModal 
+        isOpen={showSignInModal} 
+        onClose={() => setShowSignInModal(false)}
+        onSignUpClick={handleSwitchToSignUp}
+      />
+      <SignUpModal 
+        isOpen={showSignUpModal} 
+        onClose={() => setShowSignUpModal(false)}
+        onSignInClick={handleSwitchToSignIn}
+      />
     </div>
   )
 }

@@ -7,13 +7,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { X, Eye, EyeOff } from "lucide-react"
+import { api } from "@/lib/api"
+import { useRouter } from "next/navigation"
 
 interface SignInModalProps {
   isOpen: boolean
   onClose: () => void
+  onSignUpClick?: () => void
 }
 
-export function SignInModal({ isOpen, onClose }: SignInModalProps) {
+export function SignInModal({ isOpen, onClose, onSignUpClick }: SignInModalProps) {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -29,31 +33,35 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
     setIsLoading(true)
     setError("")
 
-    // Simulate API call
-    setTimeout(() => {
-      if (email === "parent@demo.co" && password === "thoven123") {
-        // Parent account - redirect to parent dashboard
-        setError("")
-        console.log("[v0] Parent sign in successful! Redirecting to dashboard...")
+    try {
+      const response = await api.auth.login({
+        email,
+        password,
+        user_type: 'user'
+      })
+      
+      if (response.token) {
         onClose()
-        window.location.href = "/parent/dashboard"
-        return
+        // Redirect based on profile type
+        if (response.profile?.profile_type === 2) {
+          router.push("/parent/dashboard")
+        } else if (response.profile?.profile_type === 3) {
+          router.push("/teacher/dashboard")
+        } else {
+          router.push("/dashboard")
+        }
       }
-
-      // Mock authentication logic for other accounts
-      if (email === "wrong@email.com") {
+    } catch (err: any) {
+      if (err.message.includes("401") || err.message.includes("Invalid")) {
+        setError("Invalid email or password")
+      } else if (err.message.includes("404")) {
         setError("No account found. Want to sign up?")
-      } else if (password === "wrongpassword") {
-        setError("Oops! Wrong password.")
       } else {
-        // Success - show confetti and redirect
-        setError("")
-        // Add confetti animation here
-        console.log("[v0] Sign in successful!")
-        onClose()
+        setError(err.message || "Sign in failed. Please try again.")
       }
+    } finally {
       setIsLoading(false)
-    }, 2000)
+    }
   }
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -149,7 +157,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
                     <button
                       type="button"
                       className="text-amber-600 hover:text-amber-700 underline font-medium"
-                      onClick={() => console.log("[v0] Open sign up modal")}
+                      onClick={onSignUpClick}
                     >
                       Want to sign up?
                     </button>
@@ -191,7 +199,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
             <button
               type="button"
               className="text-amber-600 hover:text-amber-700 font-medium hover:underline"
-              onClick={() => console.log("[v0] Open sign up modal")}
+              onClick={onSignUpClick}
             >
               Sign Up
             </button>

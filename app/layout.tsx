@@ -18,9 +18,18 @@ export const fontDisplay = Fredoka({
 })
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.app",
+  title: "Thoven - Personalized Music Lessons",
+  description: "Connect with expert music teachers for personalized 1-on-1 lessons. Learn piano, guitar, violin, and more with qualified instructors.",
+  keywords: "music lessons, piano lessons, guitar lessons, violin lessons, music teachers, online music lessons",
+  authors: [{ name: "Thoven" }],
+  icons: {
+    icon: "/favicon.ico",
+  },
+  openGraph: {
+    title: "Thoven - Personalized Music Lessons",
+    description: "Connect with expert music teachers for personalized 1-on-1 lessons",
+    type: "website",
+  },
 }
 
 export default function RootLayout({
