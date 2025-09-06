@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -72,7 +72,7 @@ export default function FindTeachersPage() {
     }
   }
 
-  const filterTeachers = () => {
+  const filterTeachers = useCallback(() => {
     let filtered = [...teachers]
 
     // Search filter
@@ -114,11 +114,12 @@ export default function FindTeachersPage() {
     }
 
     setFilteredTeachers(filtered)
-  }
+  }, [searchTerm, selectedInstrument, priceRange, lessonType, teachers])
 
-  const allInstruments = Array.from(new Set(
-    teachers.flatMap(t => t.teachers?.instruments_taught || [])
-  ))
+  const allInstruments = useMemo(() => 
+    Array.from(new Set(
+      teachers.flatMap(t => t.teachers?.instruments_taught || [])
+    )), [teachers])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
@@ -130,9 +131,10 @@ export default function FindTeachersPage() {
               <Button
                 variant="ghost"
                 onClick={() => router.push('/app/parent/dashboard')}
-                className="hover:bg-amber-50"
+                className="hover:bg-amber-50 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                aria-label="Navigate back to parent dashboard"
               >
-                <ChevronLeft className="w-4 h-4 mr-1" />
+                <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" />
                 Back to Dashboard
               </Button>
               <h1 className="text-2xl font-bold text-gray-900">Find Music Teachers</h1>
@@ -159,6 +161,8 @@ export default function FindTeachersPage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
+                  aria-label="Search teachers"
+                  role="searchbox"
                 />
               </div>
             </div>
@@ -169,7 +173,8 @@ export default function FindTeachersPage() {
               <select
                 value={selectedInstrument}
                 onChange={(e) => setSelectedInstrument(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                aria-label="Filter by instrument"
               >
                 <option value="all">All Instruments</option>
                 {allInstruments.map(instrument => (
@@ -184,7 +189,8 @@ export default function FindTeachersPage() {
               <select
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                aria-label="Filter by price range"
               >
                 <option value="all">Any Price</option>
                 <option value="0-50">Under $50/hr</option>
@@ -199,7 +205,8 @@ export default function FindTeachersPage() {
               <select
                 value={lessonType}
                 onChange={(e) => setLessonType(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                aria-label="Filter by lesson type"
               >
                 <option value="all">All Types</option>
                 <option value="online">Online Only</option>
@@ -325,7 +332,10 @@ export default function FindTeachersPage() {
 
                 {/* View Profile Button */}
                 <div className="px-6 pb-6">
-                  <Button className="w-full bg-amber-500 hover:bg-amber-600 text-white">
+                  <Button 
+                    className="w-full bg-amber-500 hover:bg-amber-600 text-white focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                    aria-label={`View profile of ${teacher.first_name} ${teacher.last_name}`}
+                  >
                     View Profile
                   </Button>
                 </div>

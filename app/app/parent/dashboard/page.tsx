@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -9,14 +9,38 @@ import { StudentsPanel } from "@/components/students-panel"
 import { ClassesPanel } from "@/components/classes-panel"
 import { MessageCenter } from "@/components/message-center"
 import { LeftNavRail } from "@/components/left-nav-rail"
+import { TeacherDiscoveryCTA } from "@/components/teacher-discovery-cta"
 
-// Dev fixtures will be replaced with real user data
+// Type definitions for fixtures
+interface Student {
+  id: string
+  name: string
+  avatar: string
+  interests: string[]
+  activeClasses: number
+  modes: string[]
+}
 
-const studentsFixture = []  // Start with no students to show the Find Teachers CTA
+interface Class {
+  id: string
+  name: string
+  teacher: string
+  student: string
+  lastUpdate: string
+}
 
-const classesFixture = []  // Start with no classes
+interface Message {
+  id: string
+  isNew: boolean
+  sender: string
+  subject: string
+  date: string
+}
 
-const messagesFixture = []  // Start with no messages
+// Initialize with empty arrays (typed)
+const studentsFixture: Student[] = []
+const classesFixture: Class[] = []
+const messagesFixture: Message[] = []
 
 export default function ParentDashboard() {
   const { user, profile, signOut, loading } = useAuth()
@@ -26,18 +50,19 @@ export default function ParentDashboard() {
   const [messages, setMessages] = useState(messagesFixture)
   const [showArchived, setShowArchived] = useState(false)
 
-  // Use real user data or fallback to fixture
-  const parentData = profile ? {
-    name: `${profile.first_name} ${profile.last_name}`,
-    email: profile.email,
-    role: profile.role === 'parent' ? 'Parent' : profile.role,
-    avatar: profile.profile_picture_url || "/woman-dark-hair.png",
-  } : {
-    name: "Keriman Erten",
-    email: "kerimanerten@iCloud.com",
-    role: "Mother",
-    avatar: "/woman-dark-hair.png",
-  }
+  // Memoize parent data calculation for performance
+  const parentData = useMemo(() => 
+    profile ? {
+      name: `${profile.first_name} ${profile.last_name}`,
+      email: profile.email,
+      role: profile.role === 'parent' ? 'Parent' : profile.role,
+      avatar: profile.profile_picture_url || "/woman-dark-hair.png",
+    } : {
+      name: "Keriman Erten",
+      email: "kerimanerten@iCloud.com",
+      role: "Mother",
+      avatar: "/woman-dark-hair.png",
+    }, [profile])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -99,7 +124,8 @@ export default function ParentDashboard() {
           <span className="font-sans text-gray-600">Welcome, {parentData.name}</span>
           <Button
             onClick={() => router.push('/app/find-teachers')}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+            className="bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+            aria-label="Navigate to find teachers page"
           >
             Find Teachers
           </Button>
@@ -107,6 +133,7 @@ export default function ParentDashboard() {
             variant="outline"
             className="border-orange-400 text-orange-600 hover:bg-orange-50 bg-transparent shadow-[0_4px_0_0_rgb(251,146,60)] hover:shadow-[0_2px_0_0_rgb(251,146,60)] active:shadow-[0_1px_0_0_rgb(251,146,60)] transition-all duration-150 active:translate-y-1 font-sans font-semibold"
             onClick={handleLogout}
+            aria-label="Sign out of your account"
           >
             Logout
           </Button>
@@ -125,29 +152,10 @@ export default function ParentDashboard() {
         {/* Left Navigation Rail */}
         <LeftNavRail />
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 ml-64">
-          {/* Find Teachers CTA - Always visible */}
-          <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-8 mb-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">
-                  {students.length === 0 ? "Start Your Musical Journey!" : "Find More Teachers"}
-                </h2>
-                <p className="text-amber-50">
-                  {students.length === 0 
-                    ? "Find qualified music teachers in your area and book your first lesson."
-                    : "Discover new teachers and expand your musical horizons."}
-                </p>
-              </div>
-              <Button
-                onClick={() => router.push('/app/find-teachers')}
-                className="bg-white text-amber-600 hover:bg-amber-50 font-semibold px-6 py-3"
-              >
-                Browse Teachers →
-              </Button>
-            </div>
-          </div>
+        {/* Main Content - Responsive margins */}
+        <main className="flex-1 p-4 md:p-6 md:ml-64">
+          {/* Teacher Discovery CTA */}
+          <TeacherDiscoveryCTA hasStudents={students.length > 0} />
 
           {/* Row A - Top Panels */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
