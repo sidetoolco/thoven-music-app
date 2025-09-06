@@ -12,51 +12,11 @@ import { LeftNavRail } from "@/components/left-nav-rail"
 
 // Dev fixtures will be replaced with real user data
 
-const studentsFixture = [
-  {
-    id: "1",
-    name: "Tommy Erten",
-    avatar:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/make_him_be_waving_just_waving_1756835489299-viUDIU3Cm4Qdw9BcXS2twEJbeFd7Zt.png",
-    interests: ["Piano", "Ukulele"],
-    activeClasses: 5,
-    modes: ["In-Person", "Online"],
-  },
-]
+const studentsFixture = []  // Start with no students to show the Find Teachers CTA
 
-const classesFixture = [
-  {
-    id: "1",
-    name: "Piano Classes for Teenagers",
-    teacher: "David Chen",
-    student: "Tommy Erten",
-    lastUpdate: "07/04/2025",
-  },
-]
+const classesFixture = []  // Start with no classes
 
-const messagesFixture = [
-  {
-    id: "1",
-    isNew: true,
-    sender: "Camila Torres",
-    subject: "Progress of Pepe during the classes",
-    date: "Today",
-  },
-  {
-    id: "2",
-    isNew: false,
-    sender: "Camila Torres",
-    subject: "Payment Updates",
-    date: "29 May",
-  },
-  {
-    id: "3",
-    isNew: false,
-    sender: "David Chen",
-    subject: "Welcome to Piano Lesson for teenagers!",
-    date: "15 May",
-  },
-]
+const messagesFixture = []  // Start with no messages
 
 export default function ParentDashboard() {
   const { user, profile, signOut, loading } = useAuth()
@@ -167,23 +127,27 @@ export default function ParentDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 p-6 ml-64">
-          {/* Find Teachers CTA - Show when no students */}
-          {students.length === 0 && (
-            <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-8 mb-6 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold mb-2">Start Your Musical Journey!</h2>
-                  <p className="text-amber-50">Find qualified music teachers in your area and book your first lesson.</p>
-                </div>
-                <Button
-                  onClick={() => router.push('/app/find-teachers')}
-                  className="bg-white text-amber-600 hover:bg-amber-50 font-semibold px-6 py-3"
-                >
-                  Browse Teachers →
-                </Button>
+          {/* Find Teachers CTA - Always visible */}
+          <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-8 mb-6 text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">
+                  {students.length === 0 ? "Start Your Musical Journey!" : "Find More Teachers"}
+                </h2>
+                <p className="text-amber-50">
+                  {students.length === 0 
+                    ? "Find qualified music teachers in your area and book your first lesson."
+                    : "Discover new teachers and expand your musical horizons."}
+                </p>
               </div>
+              <Button
+                onClick={() => router.push('/app/find-teachers')}
+                className="bg-white text-amber-600 hover:bg-amber-50 font-semibold px-6 py-3"
+              >
+                Browse Teachers →
+              </Button>
             </div>
-          )}
+          </div>
 
           {/* Row A - Top Panels */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
